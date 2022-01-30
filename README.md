@@ -9,6 +9,8 @@ Calorie Guide
 
 ## 기존의 존재하는 식단 관리 어플들과의 차별화
 
+![한계점](https://user-images.githubusercontent.com/73628812/151692555-eee75b81-1aa5-4e4b-a5c1-3a00a9386c7a.PNG)
+
 
 
 
