@@ -27,6 +27,8 @@ Calorie Guide
 + HTML/CSS
 + tensorflow.js
 + node.js
++ JSON
++ Pug
 
 ## 시스템 흐름
 
