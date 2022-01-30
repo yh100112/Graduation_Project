@@ -46,5 +46,5 @@ Calorie Guide
 + tensorflow.js를 이용해 머신러닝을 통한 학습모델 구현
 + 머신러닝 학습에 필요한 음식 사진들을 데이터 크롤링해서 가져와 Teachable Machine을 통해 학습
 + node.js, Javascript, JSON 을 이용해 Back-end 구현
-+ 최종 프로젝트 발표
-+ 프로젝트 조장
++ 최종 프로젝트 발표자
++ 졸업작품 팀 조장
