@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="/css/calendar.css" />
+        <link rel="stylesheet" href="/css/styles.css" />
+        <link rel="stylesheet" href="/css/ai_style.css" />
+        <script type="text/javascript" src="/scripts/jquery/dist/jquery.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+        <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+        <script>
+            $(function(){
+                $(".header").load("views/include/header.html");
+                $(".sideMenu").load("views/include/side.html");
+                $(".footer").load("views/include/footer.html");
+            });
+        </script>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="header sb-topnav navbar navbar-expand navbar-dark bg-dark"></nav>
+        <div id="layoutSidenav">
+        <div class="sideMenu" id="layoutSidenav_nav"></div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid">
+                        <h1 class="mt-4">일일 목표</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">오늘 섭취한 음식 데이터</li>
+                        </ol>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-pie mr-1"></i>
+                                        칼로리
+                                    </div>
+                                    <div class="card-body"><canvas id="kcal" width="100%" height="50"></canvas></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-pie mr-1"></i>
+                                        탄수화물
+                                    </div>
+                                    <div class="card-body"><canvas id="tan" width="100%" height="50"></canvas></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-pie mr-1"></i>
+                                        단백질
+                                    </div>
+                                    <div class="card-body"><canvas id="dan" width="100%" height="50"></canvas></div>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-pie mr-1"></i>
+                                        지방
+                                    </div>
+                                    <div class="card-body"><canvas id="gi" width="100%" height="50"></canvas></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <footer class="footer py-4 bg-light mt-auto"></footer>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="../../js/popper.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+        crossorigin="anonymous"></script>
+
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+        <script>
+            $(function() {
+                $("#food-table").DataTable({});
+
+                list();
+                detail();
+            })
+
+            function list() {
+                var jsonArray = {
+                    id : getCookie("userData")
+                }
+
+                $.ajax({
+                    url:'/goal/list', // 요청 할 주소    
+                    type:'POST', // GET, PUT
+                    data: JSON.stringify(jsonArray), // 전송할 데이터
+                    contentType: "application/json",
+                    dataType:'JSON',// xml, json, script, html
+                    //beforeSend:function(jqXHR) {},// 서버 요청 전 호출 되는 함수 return false; 일 경우 요청 중단
+                    success:function(data) {
+                        var G_kcal = data[0].G_kcal, G_tan = data[0].G_tan, G_dan = data[0].G_dan, G_gi = data[0].G_gi;
+                        var inKcal = 0, inTan = 0, inDan = 0, inGi = 0;
+                        for(var i = 1; i < data.length; i++) {
+                            inKcal = inKcal + data[i].M_kcal
+                            inTan = inTan + data[i].M_tan
+                            inDan = inDan + data[i].M_dan
+                            inGi = inGi + data[i].M_gi
+                        }
+
+                        var kcal = $("#kcal");
+                        var tan = $("#tan");
+                        var dan = $("#dan");
+                        var gi = $("#gi");
+                        
+                        if(G_kcal > inKcal) {
+                            chart(G_kcal, inKcal, 1, kcal, '#007bff')
+                            kcal.after("<div style='text-align: right; margin-bottom: 10px;'><text>목표량 : " + G_kcal.toFixed(2) + " kcal</text><br><text> 남은량 : " + (G_kcal - inKcal).toFixed(2) +  " kcal</text></div>")
+                        } else if(G_kcal < inKcal) {
+                            chart(G_kcal, inKcal, 2, kcal, '#007bff')
+                            kcal.after("<div style='text-align: right; margin-bottom: 10px;'><text>목표량 : " + G_kcal.toFixed(2) + " kcal</text><br><text> 초과량 : " + (inKcal - G_kcal).toFixed(2) +  " kcal</text></div>")
+                        } else {
+                            chart(G_kcal, inKcal, 3, kcal, '#007bff')
+                        }
+
+                        if(G_tan > inTan) {
+                            chart(G_tan, inTan, 1, tan, '#8A2BE2')
+                            tan.after("<div style='text-align: right; margin-bottom: 10px;'><text>목표량 : " + G_tan.toFixed(2) + " g</text><br><text> 남은량 : " + (G_tan - inTan).toFixed(2) +  " g</text></div>")
+                        } else if(G_tan < inTan) {
+                            chart(G_tan, inTan, 2, tan, '#8A2BE2')
+                            tan.after("<div style='text-align: right; margin-bottom: 10px;'><text>목표량 : " + G_tan.toFixed(2) + " g</text><br><text> 초과량 : " + (inTan - G_tan).toFixed(2) +  " g</text></div>")
+                        } else {
+                            chart(G_tan, inTan, 3, tan, '#8A2BE2')
+                        }
+
+                        if(G_dan > inDan) {
+                            chart(G_dan, inDan, 1, dan, '#ffc107')
+                            dan.after("<div style='text-align: right; margin-bottom: 10px;'><text>목표량 : " + G_dan.toFixed(2) + " g</text><br><text> 남은량 : " + (G_dan - inDan).toFixed(2) +  " g</text></div>")
+                        } else if(G_dan < inDan) {
+                            chart(G_dan, inDan, 2, dan, '#ffc107')
+                            dan.after("<div style='text-align: right; margin-bottom: 10px;'><text>목표량 : " + G_dan.toFixed(2) + " g</text><br><text> 초과량 : " + (inDan - G_dan).toFixed(2) +  " g</text></div>")
+                        } else {
+                            chart(G_dan, inDan, 3, dan, '#ffc107')
+                        }
+
+                        if(G_gi > inGi) {
+                            chart(G_gi, inGi, 1, gi, '#28a745')
+                            gi.after("<div style='text-align: right; margin-bottom: 10px;'><text>목표량 : " + G_gi.toFixed(2) + " g</text><br><text> 남은량 : " + (G_gi - inGi).toFixed(2) +  " g</text></div>")
+                        } else if(G_gi < inGi) {
+                            chart(G_gi, inGi, 2, gi, '#28a745')
+                            gi.after("<div style='text-align: right; margin-bottom: 10px;'><text>목표량 : " + G_gi.toFixed(2) + " g</text><br><text> 초과량 : " + (inGi - G_gi).toFixed(2) +  " g</text></div>")
+                        } else {
+                            chart(G_gi, inGi, 3, gi, '#28a745')
+                        }
+                    },// 요청 완료 시
+                    error:function(data) {
+                        console.log("error")
+                    },// 요청 실패.
+                    //complete:function(jqXHR) {}// 요청의 실패, 성공과 상관 없이 완료 될 경우 호출
+                });
+            }
+
+            function chart(G_data, M_data, num, area, color) {
+                if(num == 1) {
+                    new Chart(area, {
+                        type: 'pie',
+                        data: {
+                            labels: ["섭취량", "남은량"],
+                            datasets: [{
+                            data: [M_data.toFixed(2), (G_data-M_data).toFixed(2)],
+                            backgroundColor: [color, '#DCDCDC'],
+                            }],
+                        },
+                    });
+                } else if(num == 2) {
+                    new Chart(area, {
+                        type: 'pie',
+                        data: {
+                            labels: ["섭취량", "초과량"],
+                            datasets: [{
+                            data: [M_data.toFixed(2), (M_data-G_data).toFixed(2)],
+                            backgroundColor: [color, '#FF0000'],
+                            }],
+                        },
+                    });
+                } else {
+                    new Chart(area, {
+                        type: 'pie',
+                        data: {
+                            labels: ["섭취량"],
+                            datasets: [{
+                            data: [M_data.toFixed(2)],
+                            backgroundColor: [color],
+                            }],
+                        },
+                    });
+                }
+            }
+
+            function detail() {
+                var jsonArray = {
+                    id : getCookie("userData")
+                }
+
+                $.ajax({
+                    url:'/user/myPage/detail', // 요청 할 주소    
+                    type:'POST', // GET, PUT
+                    data: JSON.stringify(jsonArray), // 전송할 데이터
+                    contentType: "application/json",
+                    dataType:'JSON',// xml, json, script, html
+                    //beforeSend:function(jqXHR) {},// 서버 요청 전 호출 되는 함수 return false; 일 경우 요청 중단
+                    success:function(data) {
+                        var goal = ""
+                        if(data[0].Goal == 1) {
+                            goal = "유지"
+                        } else if(data[0].Goal == 2) {
+                            goal = "벌크업"
+                        } else if(data[0].Goal == 3) {
+                            goal = "다이어트"
+                        }
+                        var date = new Date();
+                        var nowDate = date.getFullYear() + "년 " + ("0"+(date.getMonth()+1)).slice(-2) + "월 " + ("0"+date.getDate()).slice(-2) + "일";
+
+                        $('.breadcrumb').after("<div><text>" + nowDate + "</text></div><div style='text-align: right; margin-bottom: 10px;'><text>몸무게 : " + data[0].Weight + "</text><br><text> 목표 : " + goal +  "</text></div>")
+                    },// 요청 완료 시
+                    error:function(data) {
+                        console.log("error")
+                    },// 요청 실패.
+                    //complete:function(jqXHR) {}// 요청의 실패, 성공과 상관 없이 완료 될 경우 호출
+                });
+            }
+
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+        </script>
+    </body>
+</html>

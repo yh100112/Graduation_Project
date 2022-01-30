@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link href="/css/styles.css" rel="stylesheet" />
+        <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+        <script>
+            $(function(){
+                $(".header").load("views/include/header.html");
+                $(".sideMenu").load("views/include/side.html");
+                $(".footer").load("views/include/footer.html");
+            });
+        </script>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="header sb-topnav navbar navbar-expand navbar-dark bg-dark"></nav>
+        <div id="layoutSidenav">
+        <div class="sideMenu" id="layoutSidenav_nav"></div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid">
+                        <h1 class="mt-4">회원 관리</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">Dashboard</li>
+                        </ol>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="card bg-secondary text-white mb-4">
+                                    <div id="member" class="card-body">회원 정보</div>
+                                    <!-- <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                    </div> -->
+                                </div>
+                            </div>
+                            <!-- <div class="col-xl-3 col-md-6">
+                                <div class="card bg-warning text-white mb-4">
+                                    <div class="card-body">다이어리</div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-white stretched-link" href="/diary">View Details</a>
+                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-success text-white mb-4">
+                                    <div class="card-body">일일 목표</div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-white stretched-link" href="/goal">View Details</a>
+                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card bg-danger text-white mb-4">
+                                    <div class="card-body">정보 공유</div>
+                                    <div class="card-footer d-flex align-items-center justify-content-between">
+                                        <a class="small text-white stretched-link" href="/board">View Details</a>
+                                        <div class="small text-white"><i class="fas fa-angle-right"></i></div>
+                                    </div>
+                                </div>
+                            </div> -->
+                        </div>
+                        <!-- <div class="row">
+                            <div class="col-xl-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-area mr-1"></i>
+                                        체중 변화
+                                    </div>
+                                    <div class="card-body"><canvas id="myAreaChart" width="100%" height="40"></canvas></div>
+                                </div>
+                            </div>
+                            <div class="col-xl-6">
+                                <div class="card mb-4">
+                                    <div class="card-header">
+                                        <i class="fas fa-chart-bar mr-1"></i>
+                                        운동량 변화
+                                    </div>
+                                    <div class="card-body"><canvas id="myBarChart" width="100%" height="40"></canvas></div>
+                                </div>
+                            </div>
+                        </div> -->
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <i class="fas fa-table mr-1"></i>
+                                음식 데이터
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped" id="food-table" width="100%" cellspacing="0">
+                                        <thead>
+                                            <tr>
+                                                <td scope="col">음식이름</td>
+                                                <td scope="col">칼로리 (100g)</td>
+                                                <td scope="col">탄수화물</td>
+                                                <td scope="col">단백질</td>
+                                                <td scope="col">지방</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <footer class="footer py-4 bg-light mt-auto"></footer>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+        <!-- <script src="assets/demo/chart-area-demo.js"></script>
+        <script src="assets/demo/chart-bar-demo.js"></script> -->
+        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+        <script src="assets/demo/datatables-demo.js"></script>
+        <script>
+            $(function() {
+                $("#food-table").DataTable({});
+
+                foodList();
+                detail();
+            })
+
+            function foodList() {
+                $.ajax({
+                    url:'/food/list', // 요청 할 주소    
+                    type:'GET', // GET, PUT
+                    contentType: "application/json",
+                    dataType:'JSON',// xml, json, script, html
+                    //beforeSend:function(jqXHR) {},// 서버 요청 전 호출 되는 함수 return false; 일 경우 요청 중단
+                    success:function(data) {
+                        $("#food-table").dataTable({
+                            data: data,
+                            destroy: true,
+                            columns: [
+                                { data: 'kor_F_name' },
+                                { data: 'F_kcal' },
+                                { data: 'F_tan' },
+                                { data: 'F_dan' },
+                                { data: 'F_gi' }
+                            ]
+                        });
+                    },// 요청 완료 시
+                    error:function(data) {
+                        console.log("error")
+                    },// 요청 실패.
+                    //complete:function(jqXHR) {}// 요청의 실패, 성공과 상관 없이 완료 될 경우 호출
+                });
+            }
+
+            function detail() {
+                var jsonArray = {
+                    id : getCookie("userData")
+                }
+
+                $.ajax({
+                    url:'/user/myPage/detail', // 요청 할 주소    
+                    type:'POST', // GET, PUT
+                    data: JSON.stringify(jsonArray), // 전송할 데이터
+                    contentType: "application/json",
+                    dataType:'JSON',// xml, json, script, html
+                    //beforeSend:function(jqXHR) {},// 서버 요청 전 호출 되는 함수 return false; 일 경우 요청 중단
+                    success:function(data) {
+                        var profile = data[0].Profile.split('/');
+                        var detailFlex = document.getElementById('member');
+                        var divComment = document.createElement("div");
+                        divComment.className = 'row'
+                        divComment.innerHTML = "<div class='box'><img class='profileImg' src='../../upload/" + profile[profile.length-1] + "'></div>" +
+                                               "<div style='margin-left: 50px;'><b style='font-size: 20px;'>" + data[0].Nickname + "</b>" +
+                                               "<div style='margin-top: 50px; font-size: 16px;'>키 : " + data[0].Height + "</div>" + 
+                                               "<div style='margin-top: 30px; margin-bottom: 30px; font-size: 16px;'>몸무게 : " + data[0].Weight + "</div></div>";
+                        detailFlex.after(divComment);
+                    },// 요청 완료 시
+                    error:function(data) {
+                        console.log("error")
+                    },// 요청 실패.
+                    //complete:function(jqXHR) {}// 요청의 실패, 성공과 상관 없이 완료 될 경우 호출
+                });
+            }
+
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+        </script>
+        <style>
+            .box {
+                margin-left: 50px;
+                margin-bottom: 30px;
+                width: 300px;
+                height: 200px; 
+                border-radius: 70%;
+                overflow: hidden;
+            }
+        </style>
+    </body>
+</html>

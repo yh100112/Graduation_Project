@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="../../css/styles.css" />
+        <link rel="stylesheet" href="../../css/ai_style.css" />
+        <script type="text/javascript" src="/scripts/jquery/dist/jquery.js"></script>
+        <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
+        <script>
+            jQuery.browser = {};
+            (function () {
+                jQuery.browser.msie = false;
+                jQuery.browser.version = 0;
+                if (navigator.userAgent.match(/MSIE ([0-9]+)\./)) {
+                    jQuery.browser.msie = true;
+                    jQuery.browser.version = RegExp.$1;
+                }
+            })();
+            
+            $(function(){
+                $(".header").load("views/include/header.html");
+                $(".sideMenu").load("views/include/side.html");
+                $(".footer").load("views/include/footer.html");
+            });
+        </script>
+    </head>
+    <body class="sb-nav-fixed">
+        <nav class="header sb-topnav navbar navbar-expand navbar-dark bg-dark"></nav>
+        <div id="layoutSidenav">
+        <div class="sideMenu" id="layoutSidenav_nav"></div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid">
+                        <h1 class="mt-4">정보공유게시판</h1>
+                        <ol class="breadcrumb mb-4">
+                            <li class="breadcrumb-item active">회원들과 정보공유게시판</li>
+                        </ol>
+                        <div class="card mb-4">
+                            <div class="card-header" style="text-align: right;">
+                                <button type="button" class="create btn btn-primary">신규 등록</button>
+                            </div>
+                            <div class="card-body" id="card-main">
+                                <div id="board">
+                                    
+                                </div>
+                                <div id="myModal" class="modal modal_close" tabindex="-1" data-backdrop="static" data-keyboard="false">
+                                    <div class="modal-dialog modal-xl">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close modal_close close_select" data-dismiss="modal" aria-label="Close">
+                                                    <span class="close_select" aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body" id="modal-body">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="createModal" class="modal modal_close" tabindex="-1" data-backdrop="static" data-keyboard="false">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">신규 등록</h5>
+                                                <button type="button" class="close modal_close close_select" data-dismiss="modal" aria-label="Close">
+                                                    <span class="close_select" aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="col-sm-12">
+                                                    <label class="small mb-1">사진</label>
+                                                    <div class="card mb-4">
+                                                        <div class="container file-upload">
+                                                            <div class="profile-create-wrap image-upload-wrap">
+                                                                <input id="createInputProfile" name="createInputProfile" class="file-upload-input" type='file' onchange="readURL(this, 'create');" accept="image/*" />
+                                                                <div class="drag-text">
+                                                                    <i class="fas fa-plus fa-7x mt-3"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div class="profile-create-content" style="text-align: center;">
+                                                                <img class="profile-create-image" id="profile-create-image" src="#" alt="your image" style="max-width: 100%; max-height: 235px;" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <label class="small mb-1" for="inputCreateContent">내용</label>
+                                                    <textarea class="form-control mb-3" id="inputCreateContent" cols="40" rows="5"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary modal_create" data-dismiss="modal">등록</button>
+                                                <button type="button" class="btn btn-secondary close_select" data-dismiss="modal">닫기</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="modifyModal" class="modal modal_close" tabindex="-1" data-backdrop="static" data-keyboard="false">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">게시글 수정</h5>
+                                                <button type="button" class="close modal_close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="col-sm-12">
+                                                    <label class="small mb-1">사진</label>
+                                                    <div class="card mb-4">
+                                                        <div class="container file-upload">
+                                                            <div class="profile-modify-wrap image-upload-wrap">
+                                                                <input id="modifyInputProfile" name="modifyInputProfile" class="file-upload-input" type='file' onchange="readURL(this, 'modify');" accept="image/*" />
+                                                                <div class="drag-text">
+                                                                    <i class="fas fa-plus fa-7x mt-3"></i>
+                                                                </div>
+                                                            </div>
+                                                            <div class="profile-modify-content" style="text-align: center;">
+                                                                <img class="profile-modify-image" id="profile-modify-image" src="#" alt="your image" style="max-width: 100%; max-height: 235px;" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12">
+                                                    <label class="small mb-1" for="inputModifyContent">내용</label>
+                                                    <textarea class="form-control mb-3" id="inputModifyContent" cols="40" rows="5"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary modal_modify" data-dismiss="modal">수정</button>
+                                                <button type="button" class="btn btn-secondary close_select" data-dismiss="modal">닫기</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="menuModal" class="modal modal_close" tabindex="-1" data-backdrop="static" data-keyboard="false">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content" style="width: 300px; margin: 0 auto;">
+                                            <div class="menu-body">
+                                                <div class="menu_delete">
+                                                    <span style="color: red;">삭제</span>
+                                                </div>
+                                                <div class="menu_modify">
+                                                    <span>수정</span>
+                                                </div>
+                                                <div class="menu_close">
+                                                    <span>닫기</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="commentModifyModal" class="modal modal_close" tabindex="-1" data-backdrop="static" data-keyboard="false">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">댓글 수정</h5>
+                                                <button type="button" class="close modal_close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="col-sm-12">
+                                                    <label class="small mb-1" for="inputCommentModifyContent">내용</label>
+                                                    <textarea class="form-control mb-3" id="inputCommentModifyContent" cols="40" rows="5"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary comment_modify" data-dismiss="modal">수정</button>
+                                                <button type="button" class="btn btn-secondary close_select" data-dismiss="modal">닫기</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="commentModal" class="modal modal_close" tabindex="-1" data-backdrop="static" data-keyboard="false">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content" style="width: 300px; margin: 0 auto;">
+                                            <div class="comment-body">
+                                                <div class="comment_delete">
+                                                    <span style="color: red;">삭제</span>
+                                                </div>
+                                                <div class="comment_modal">
+                                                    <span>수정</span>
+                                                </div>
+                                                <div class="comment_close">
+                                                    <span>닫기</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <footer class="footer py-4 bg-light mt-auto"></footer>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+        <!-- Option 2: Separate Popper and Bootstrap JS -->
+        <!--
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
+        -->
+        <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
+        <script>
+            var listLength = 0;
+            var boardList = [];
+            var nowNickName = "";
+            var modalNowDate = "";
+            var modalNowNickName = "";
+            var commentModalNowNickName = "";
+            var commentModalNowDate = "";
+            var replyGroup = "";
+            var replyWriter = "";
+            var replyLength = 0;
+            var commentModalNowClass = 0;
+	        var nowFilePath, nowFile;
+
+            var b = 10;
+            var l = 10;
+
+            $(function() {
+                $('.profile-create-content').hide();
+
+                date = new Date();
+                let hours = date.getHours() - date.getTimezoneOffset() / 60;;
+                let minutes = date.getMinutes();
+                let second = date.getSeconds();
+                let milliseconds = date.getSeconds();
+
+                var jsonArray = {
+                    id : getCookie("userData")
+                }
+                
+                var infoData = ajax('/user/info', JSON.stringify(jsonArray), 'POST', 'JSON')
+                nowNickName = infoData[0].Nickname;
+
+                var listData = ajax('/board/list', undefined, 'POST', 'JSON');
+                boardList = [];
+                if(listData.length != 0) {
+                    for(let i = 0; i < listData.length; i++) {
+                        boardList[i] = listData[i];
+                    }
+                    boardListInput(boardList, 'first');
+                }
+                $('.love').hide();
+                
+                setTimeout(loveList, 800);
+            });
+
+            $(window).scroll(function() {
+                var scrolltop = $(document).scrollTop();
+                var height = $(document).height();
+                var height_win = $(window).height();
+
+                var con = Math.round( $(window).scrollTop()) == $(document).height() - $(window).height()
+                var conMinus = Math.round( $(window).scrollTop()) == $(document).height() - $(window).height() - 1
+                var conPlus = Math.round( $(window).scrollTop()) == $(document).height() - $(window).height() + 1
+                
+                if (con || conMinus || conPlus) {
+                    boardListInput(boardList, 'list')
+                }
+            });
+
+            function boardListInput(data, order) {
+                var j = 0;
+                var board = document.getElementById("board");
+                if(order == 'first') {
+                    for(let i = 0; i < 10; i++) {
+                        if(data[i] != undefined) {
+                            htmlAppend(data[i], i, board)
+                        } else {
+                            htmlEndAppend();
+                        }
+                    }
+                } else {
+                    var connect = false;
+                    if(data.length > 10) {
+                        for(let a = b; a < b + 10; a++) {
+                            if(l != data.length) {
+                                connect = true;
+                                l = l + 1;
+                                htmlAppend(data[a], a, board)
+                                $('.love').hide();
+                            }
+                        }
+    
+                        if(connect) {
+                            setTimeout(loveList, 800);
+                        } else {
+                            htmlEndAppend();
+                        }
+                        b = b + 10
+                    }
+                }
+            }
+
+            function htmlAppend(data, i, board) {
+                if(data != undefined) {
+                    var profile = data.Profile.split('/');
+                    var img = data.Image.split('/');
+                    var div = document.createElement("div");
+                    var year = data.Date.split('-')[0];
+                    var month = data.Date.split('-')[1];
+                    var day = data.Date.split('-')[2].split('T')[0];
+                    var rank = "";
+                    var comment = "";
+                    if(data.Rank == '1') {
+                        rank = 'color: gold'
+                    } else if(data.Rank == '2') {
+                        rank = 'color: silver'
+                    } else if(data.Rank == '3') {
+                        rank = 'color: #cd7f32'
+                    } else {
+                        rank = 'display: none'
+                    }
+    
+                    if(data.comment.length != 0) {
+                        var c_Year = data.comment[0].C_date.split('-')[0];
+                        var c_Month = data.comment[0].C_date.split('-')[1];
+                        var c_Day = data.comment[0].C_date.split('-')[2].split('T')[0];
+                        comment = "<div class='comment'><span><b style='font-size: 14px; margin-right: 5px;'>" + data.comment[0].C_writer + "</b></span>" +
+                                  "<span style='font-size: 14px;'>" + data.comment[0].C_content + "</span></div>"
+                    }
+    
+                    div.id = 'card' + i
+                    div.className = 'card cards h-100 mb-4';
+                    div.onclick = function(){
+                        detail(event, this);
+                    }
+                    if(data.NickName == nowNickName || getCookie("userData") == 'admin') {
+                        div.innerHTML = "<div class='card-header bg-transparent'><div class='d-flex flex-wrap flex-row'>" + 
+                                "<div class='box'><img class='profileImg' src='../../upload/" + profile[profile.length-1] + "'></div>" +
+                                "<span class='nickName'>" + data.NickName + "</span><i class='fas fa-crown' style='margin-top: 8px; margin-left: 4px; " + rank + "'></i>" +
+                                "<div class='menuDiv'><i class='fas fa-ellipsis-h' data-toggle='modal' data-target='#menuModal' data-date='" + data.Date + "' data-nickname='" + data.NickName + "'></i></div></div></div>"+ 
+                                "<img src='../../upload/" + img[img.length-1] + "' class='card-img-top' alt='...'>" + 
+                                "<div class='card-body'><i class='heart" + i + " far fa-heart fa-2x heart' onclick='heart(event, this)'></i>" + 
+                                "<i class='love" + i + " fas fa-heart fa-2x love' onclick='love(event, this)'></i>" +
+                                "<p style='font-size: 12px;'><b>좋아요 <b class='count" + i +"'>" + data.loveCount + "</b>개</b></p><p>" + data.Content + "</p>" +
+                                comment +
+                                "<time datetime='" + data.Date + "' title='" + year + '-' + month + '-' + day + "'>" + year + '-' + month + '-' + day + "</time>"
+                                "</div>"
+                    } else {
+                        div.innerHTML = "<div class='card-header bg-transparent'><div class='d-flex flex-wrap flex-row'>" + 
+                                "<div class='box'><img class='profileImg' src='../../upload/" + profile[profile.length-1] + "'></div>" +
+                                "<span class='nickName'>" + data.NickName + "</span><i class='fas fa-crown' style='margin-top: 8px; margin-left: 4px; " + rank + "'></i></div></div>"+ 
+                                "<img src='../../upload/" + img[img.length-1] + "' class='card-img-top' alt='...'>" + 
+                                "<div class='card-body'><i class='heart" + i + " far fa-heart fa-2x heart' onclick='heart(event, this)'></i>" + 
+                                "<i class='love" + i + " fas fa-heart fa-2x love' onclick='love(event, this)'></i>" +
+                                "<p style='font-size: 12px;'><b>좋아요 <b class='count" + i +"'>" + data.loveCount + "</b>개</b></p><p>" + data.Content + "</p>" +
+                                comment +
+                                "<time datetime='" + data.Date + "' title='" + year + '-' + month + '-' + day + "'>" + year + '-' + month + '-' + day + "</time>"
+                                "</div>"
+                    }
+                    
+                    board.appendChild(div);
+                }
+            }
+
+            function htmlEndAppend() {
+                var cardBody = document.getElementById("card-main");
+                if($(cardBody).find('#end').length == 0) {
+                    var div = document.createElement("div");
+                    div.id = 'end'
+                    div.style = 'margin-top: 20px; text-align: center;'
+                    div.innerHTML = "<span>더 이상 표시할 게시판이 없습니다.</span>"
+                    cardBody.appendChild(div);
+                }
+            }
+
+            function detail(event, data) {
+                if(event.target.nodeName != 'svg' && event.target.nodeName != 'path') {
+                    detailDiv(event, data)
+                }
+            }
+
+            function heart(event, data) {
+                if(event.target.className.animVal.split(" ")[3] != undefined) {
+                    var svgId = event.target.className.animVal.split(" ")[3].split("t")[1]
+                    var boradNickName = ""
+                    if($(event.target.parentElement.parentElement).find('span.nickName')[0] == undefined) {
+                        boradNickName = $(event.target.parentElement.parentElement.parentElement).find('span.nickName')[0].innerHTML
+                    } else {
+                        boradNickName = $(event.target.parentElement.parentElement).find('span.nickName')[0].innerHTML
+                    }
+                    var date = $(event.target.parentElement.parentElement).find('time')[0].dateTime
+                    date = new Date(date)
+                    date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+    
+                    var jsonArray = {
+                        id : getCookie("userData"),
+                        nickName : boradNickName,
+                        date : date
+                    }
+    
+                    var data = ajax('/love/check', JSON.stringify(jsonArray), 'POST', 'TEXT');
+                    if(data == "success") {
+                        $('.heart' + svgId).hide();
+                        $('.love' + svgId).show();
+                        var count = parseInt($('.count' + svgId).text()[0]);
+                        $('.count' + svgId).text(count + 1);
+                    }
+                }
+            }
+
+            function love(event, data) {
+                if(event.target.parentElement.className.animVal != undefined) {
+                    var svgId = event.target.parentElement.className.animVal.split(" ")[3].split("e")[1]
+                    var boradNickName = $(event.target.parentElement.parentElement.parentElement).find('span.nickName')[0].innerHTML
+                    var date = $(event.target.parentElement.parentElement).find('time')[0].dateTime
+                    var date = new Date(date)
+                    var date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+    
+                    var jsonArray = {
+                        id : getCookie("userData"),
+                        nickName : boradNickName,
+                        date : date
+                    }
+    
+                    var data = ajax('/love/check', JSON.stringify(jsonArray), 'POST', 'TEXT');
+                    if(data == "success") {
+                        $('.love' + svgId).hide();
+                        $('.heart' + svgId).show();
+                        var count = parseInt($('.count' + svgId).text()[0]);
+                        $('.count' + svgId).text(count - 1);
+                    }
+                }
+            }
+
+            function loveList() {
+                var jsonArray = {
+                    id : getCookie("userData")
+                }
+
+                var loveList = ajax('/love/list', JSON.stringify(jsonArray), 'POST', 'JSON');
+                var list = []
+                loveList.forEach((i) => { 
+                    list.push(i.ID)
+                    list.push(i.Date)
+                    list.push(i.NickName)
+                });
+                for (i = 0; i < $('.card-body').find('time').length; i++) {
+                    var nickNameFind = $('.card-body').find('time')[i].parentElement.parentElement
+                    var nickName = $(nickNameFind).find('span.nickName')[0].innerHTML
+                    var date = $('.card-body').find('time')[i].dateTime
+
+                    if(list.includes(nickName) && list.includes(date)) {
+                        $('.heart' + i).hide();
+                        $('.love' + i).show();
+                    }
+                }
+            }
+
+            function comment(event, data) {
+                detailDiv(event, data)
+            }
+
+            function detailDiv(event, data) {
+                var detailNode = data.cloneNode(true);
+                var detailNowNickName = $(detailNode).find('.nickName')[0].innerHTML
+
+                var jsonArray = {
+                    nickName : detailNowNickName
+                }
+
+                var infoData = ajax('/user/info', JSON.stringify(jsonArray), 'POST', 'JSON');
+
+                var date = $(detailNode).find('time')[0].dateTime
+                date = new Date(date)
+                date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+
+                jsonArray = {
+                    id : infoData[0].ID,
+                    date : date
+                }
+                
+                var commentData = ajax('/board/comment', JSON.stringify(jsonArray), 'POST', 'JSON');
+
+                var commentDiv = "";
+                for(let i = 0; i < commentData.length; i++) {
+                    var div = "";
+                    if(commentData[i].Class == 0) {
+                        var commentDate = new Date(commentData[i].C_date)
+                        commentDate = commentDate.getFullYear() + "-" + (commentDate.getMonth() + 1) + "-" + commentDate.getDate();
+                        div = "<div class='commentList' style='margin: 1em;'><ul><div>" +
+                                  "<li><div><b>" + commentData[i].C_writer + "</b>"
+                        if(commentData[i].C_writer == nowNickName && commentData[i].C_content != '삭제된 메시지 입니다.' || getCookie("userData") == 'admin' && commentData[i].C_content != '삭제된 메시지 입니다.') {
+                            div = div + 
+                                  "<span style='float: right;'>" +
+                                  "<i class='fas fa-ellipsis-h' data-toggle='modal' data-target='#commentModal' data-nickname='" + commentData[i].C_writer + "' data-date='" + commentData[i].C_date + "' data-classnum='" + commentData[i].Class + "'></i></span>";
+                        }
+                        div = div +
+                              "</div><div style='margin-left: 10px;'>" + commentData[i].C_content + "</div>" +
+                              "<div id='comment" + commentData[i].Group + "' style='font-size: 10px; color: #8e8e8e; text-align: right;'>";
+                        if(commentData[i].C_content != '삭제된 메시지 입니다.') {
+                            div = div +
+                                  "<span class='reply' onclick='reply(\"" + commentData[i].C_writer + "\", \"" + commentData[i].C_date + "\", \"" + commentData[i].Group + "\")'>답글 달기</span>";
+                        }
+                        div = div + "<span>" + commentDate + "</span></div></li></div></ul></div>"
+                    }
+                    commentDiv = commentDiv + div
+                }
+
+                $('#myModal').modal('show');
+                $(detailNode).find('div.comment').remove();
+                detailNode.className = 'card h-100 mb-4'
+                detailNode.style = 'width: 100%'
+                var divClone = document.createElement("div");
+                divClone.className = 'd-flex flex-row flex-wrap'
+                divClone.id = 'detailFlex'
+                divClone.prepend(detailNode);
+                var body = document.getElementById('modal-body');
+                body.prepend(divClone.cloneNode(true));
+                var detailFlex = document.getElementById('detailFlex');
+                var divComment = document.createElement("div");
+                divComment.className = 'card'
+                divComment.style = 'width: 100%'
+                divComment.innerHTML = "<div id='commentScroll' class='commentScroll' style='overflow-y: scroll; max-height: 534px;'>" + commentDiv + "</div>" +
+                                       "<div class='d-flex flex-row' style='border-top: 1px solid lightgray; margin-top: auto;'><textarea id='comment' placeholder='댓글 달기...' class='form-control' cols='20' rows='1' style='border: 0' spellcheck='false'></textarea>" +
+                                       "<button class='form-control commentB h-100' onclick='commentCreate(\"" + infoData[0].ID + "\", \"" + date + "\");'>게시</button></div>"
+                detailFlex.appendChild(divComment);
+
+                for(let i = 0; i < commentData.length; i++) {
+                    if(commentData[i].Class != 0) {
+                        var div = "";
+                        if(commentData[i].Class == 1) {
+                            div = "<div class='replyon" + commentData[i].Group + "' onclick='replyswitch(\"reply" + commentData[i].Group + "\", this)' style='text-align: center; font-size: 12px; margin-top: 1em; cursor: pointer;'>답글 보기</div>" +
+                                  "<div class='replyhide" + commentData[i].Group + "' onclick='replyswitch(\"reply" + commentData[i].Group + "\", this)' style='text-align: center; font-size: 12px; margin-top: 1em; cursor: pointer;'>답글 숨기기</div>"  ;
+                        }
+                        div = div +
+                              "<div class='replyList" + commentData[i].Group + "' id='reply" + commentData[i].Group + commentData[i].Class + "' style='margin: 1em;'><ul><div>" +
+                              "<li><div><b>" + commentData[i].C_writer + "</b>";
+                        if(commentData[i].C_writer == nowNickName && commentData[i].C_content != '삭제된 메시지 입니다.' || getCookie("userData") == 'admin' && commentData[i].C_content != '삭제된 메시지 입니다.') {
+                            div = div + 
+                                  "<span style='float: right;'>" +
+                                  "<i class='fas fa-ellipsis-h' data-toggle='modal' data-target='#commentModal' data-nickname='" + commentData[i].C_writer + "' data-date='" + commentData[i].C_date + "' data-classnum='" + commentData[i].Class + "'></i></span>";
+                        }
+                        div = div +
+                              "</div><div style='margin-left: 10px;'>" + commentData[i].C_content + "</div>" +
+                              "<div style='font-size: 10px; color: #8e8e8e; text-align: right;'><span>" + commentDate + "</span></div>";
+                        if($('#reply' + commentData[i].Group + (commentData[i].Class -1)).length == 0) {
+                            $('#comment' + commentData[i].Group).after(div);
+                        } else {
+                            $('#reply' + commentData[i].Group + (commentData[i].Class -1)).after(div)
+                        }
+                    }
+                    $('.replyhide' + commentData[i].Group).hide();
+                    $('.replyList' + commentData[i].Group).hide();
+                }
+            }
+
+            function commentCreate(id, date) {
+                if(replyGroup != "" && $('#comment').val().substr(0, replyLength) == replyWriter) {
+                    if($('#comment').val().substr(0, replyLength)) {
+                        var jsonArray = {
+                            id : id,
+                            date : date,
+                            C_writer : nowNickName,
+                            C_content : $('#comment').val().substr(replyLength, $('#comment').val().length),
+                            group : replyGroup
+                        }
+        
+                        nowDate = new Date()
+                        nowDate = nowDate.getFullYear() + "-" + (nowDate.getMonth() + 1) + "-" + nowDate.getDate();
+        
+                        var data = ajax('/board/reply/create', JSON.stringify(jsonArray), 'POST', 'TEXT')
+                        if(data == 'success') {
+                            alert('답글 게시가 완료되었습니다.');
+                            location.reload(true);
+                        }
+                    } else {
+                        alert('내용을 입력해주세요.')
+                        return false;
+                    }
+                } else {
+                    if($('#comment').val() != "") {
+                        var jsonArray = {
+                            id : id,
+                            date : date,
+                            C_writer : nowNickName,
+                            C_content : $('#comment').val()
+                        }
+        
+                        nowDate = new Date()
+                        nowDate = nowDate.getFullYear() + "-" + (nowDate.getMonth() + 1) + "-" + nowDate.getDate();
+        
+                        var data = ajax('/board/comment/create', JSON.stringify(jsonArray), 'POST', 'TEXT')
+                        if(data == 'success') {
+                            var divComment = document.createElement("div");
+                            divComment.className = 'commentList'
+                            divComment.style = 'margin: 1em;'
+                            divComment.innerHTML = "<ul><div><li><b>" + nowNickName + "</b><div style='margin-left: 10px;'>" + $('#comment').val() + "</div><div style='font-size: 10px; color: #8e8e8e; text-align: right;'>" + nowDate + "</div></li></div></ul>"
+                            if($('.commentList').length != 0) {
+                                $('.commentList')[$('.commentList').length -1].after(divComment)
+                            } else {
+                                var commentScrollDiv = document.getElementById('commentScroll');
+                                commentScrollDiv.appendChild(divComment)
+                            }
+                            $('#comment').val("");
+                            $(".commentScroll").scrollTop($(".commentScroll")[0].scrollHeight);
+                        }
+                    } else {
+                        alert('내용을 입력해주세요.')
+                        return false;
+                    }
+                }
+                replyGroup = "";
+            }
+
+            // 신규 등록
+            function readURL(input, type) {
+                if (input.files && input.files[0]) {
+
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        if(type == 'create') {
+                            $('.profile-create-wrap').hide();
+                            $('.profile-create-image').attr('src', e.target.result);
+                            $('.profile-create-content').show();
+                        } else {
+                            $('.profile-modify-wrap').hide();
+                            $('.profile-modify-image').attr('src', e.target.result);
+                            $('.profile-modify-content').show();
+                        }
+                    };
+
+                    reader.readAsDataURL(input.files[0]);
+                } else {
+                    removeUpload(type);
+                }
+            }
+
+            function removeUpload(type) {                
+                if ($.browser.msie) { 
+                    // ie 일때 input[type=file] init.
+                    $(".file-upload-input").replaceWith($(".file-upload-input").clone(true));
+                } else { 
+                    // other browser 일때input[type=file] init.
+                    $(".file-upload-input").val("");
+                }
+
+                if(type == 'create') {
+                    $("#profile-create-image").attr("src", null);
+                    $('.profile-create-content').hide();
+                    $('.profile-create-wrap').show();
+                } else {
+                    $("#profile-modify-image").attr("src", null);
+                    $('.profile-modify-content').hide();
+                    $('.profile-modify-wrap').show();
+                }
+            }
+
+            $('.modal_create').on('click', function(event) {
+                var con = confirm('게시판에 신규로 등록하시겠습니까?');
+                if(con) {
+                    if($('#inputCreateContent').val() == "") {
+                        alert("내용을 입력 해주세요.");
+                        return false;
+                    }
+                    if($('#createInputProfile')[0].files[0] == undefined) {
+                        alert("사진을 업로드 해주세요.")
+                        return false;
+                    }
+    
+                    var id = getCookie("userData");
+                    var upload = $('#createInputProfile')[0].files[0];
+                    var content = $('#inputCreateContent').val();
+    
+                    var formData = new FormData();
+    
+                    formData.append("id", id);
+                    formData.append("Upload", upload);
+                    formData.append("content", content);
+
+                    $.ajax({
+                        url:'/board/create', // 요청 할 주소        
+                        type:'POST', // GET, PUT
+                        data: formData, // 전송할 데이터
+                        processData: false,    // 반드시 작성
+                        contentType: false,    // 반드시 작성
+                        dataType:'TEXT',// xml, json, script, html
+                        //beforeSend:function(jqXHR) {},// 서버 요청 전 호출 되는 함수 return false; 일 경우 요청 중단
+                        success:function(data) {
+                            if(data == "success") {
+                                alert("게시판 등록이 완료되었습니다.")
+                                location.reload(true);
+                            } else {
+                                alert("오류! 관리자에게 문의하세요.")
+                                return false;
+                            }
+                        },// 요청 완료 시
+                        error:function(data) {
+                            alert("오류! 관리자에게 문의하세요.")
+                            return false;
+                        },// 요청 실패.
+                        //complete:function(jqXHR) {}// 요청의 실패, 성공과 상관 없이 완료 될 경우 호출
+                    });
+                }
+            });
+
+            $('.profile').bind('dragover', function () {
+                $('.profile').addClass('image-dropping');
+            });
+
+            $('.profile').bind('dragleave', function () {
+                $('.profile').removeClass('image-dropping');
+            });
+
+            $('.profile-create-content').on('click', function(event) {
+                var result = confirm("삭제하시겠습니까?")
+
+                if(result) {
+                    removeUpload('create');
+                } else {
+                    return false;
+                }
+            });
+
+            $('.profile-modify-content').on('click', function(event) {
+                var result = confirm("삭제하시겠습니까?")
+
+                if(result) {
+                    removeUpload('modify');
+                } else {
+                    return false;
+                }
+            });
+
+            $('.create').on('click', function(event) {
+                $('#createModal').modal('show');
+            })
+
+            $('.close_select').on('click', function(event) {
+                $('#modal-body').empty();
+            });
+
+            $('#commentModal').on('show.bs.modal', function(e) {
+                $(".modal").css("z-index","1040");
+                $("#commentModal").css("z-index","1060");
+                commentModalNowNickName = $(e.relatedTarget).data('nickname');
+                commentModalNowDate = $(e.relatedTarget).data('date');
+                commentModalNowClass = $(e.relatedTarget).data('classnum');
+            });
+
+            $('.comment_delete').on('click', function(event) {
+                var con = confirm('삭제하시겠습니까?')
+
+                var date = new Date(commentModalNowDate)
+                date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+
+                if(con) {
+                    var jsonArray = {
+                        nickName : commentModalNowNickName,
+                        date : date,
+                        classNum : commentModalNowClass
+                    }
+
+                    var data = ajax('/board/comment/delete', JSON.stringify(jsonArray), 'POST', 'TEXT')
+                    if(data == "success") {
+                        alert("삭제가 완료되었습니다.");
+                        location.reload(true);
+                    }
+                } else {
+                    return false;
+                }
+            });
+
+            $('.comment_modal').on('click', function(event) {
+                var date = new Date(commentModalNowDate)
+                date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+                
+                var jsonArray = {
+                    nickName : commentModalNowNickName,
+                    date : date
+                }
+
+                var data = ajax('/board/comment/detail', JSON.stringify(jsonArray), 'POST', 'JSON');
+
+                $('#myModal').modal('hide');
+                $('#commentModal').modal('hide');
+                $('#createModal').modal('hide');
+                $(".modal").css("z-index","1041");
+                $('.profile-modify-wrap').hide();
+                $('#commentModifyModal').modal('show');
+                $('#inputCommentModifyContent').val(data[0].C_content);
+            });
+
+            $('.comment_modify').on('click', function(event) {
+                var con = confirm('댓글을 수정하시겠습니까?');
+                if(con) {
+                    if($('#inputCommentModifyContent').val() == "") {
+                        alert("내용을 입력 해주세요.");
+                        return false;
+                    }
+    
+                    var date = new Date(commentModalNowDate)
+                    date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+    
+                    var jsonArray = {
+                        nickName : commentModalNowNickName,
+                        date : date,
+                        content : $('#inputCommentModifyContent').val()
+                    }
+
+                    var data = ajax('/board/comment/modify', JSON.stringify(jsonArray), 'POST', 'TEXT');
+                    if(data == "success") {
+                        alert("댓글 수정이 완료되었습니다.")
+                        location.reload(true);
+                    } else {
+                        alert("오류! 관리자에게 문의하세요.")
+                        return false;
+                    }
+                }
+            });
+
+            $('.comment_close').on('click', function(event) {
+                $('#commentModal').modal('hide');
+                $(".modal").css("z-index","1041");
+            });
+
+            function reply(writer, date, groupParam) {
+                replyWriter = '@' + writer + " ";
+                replyLength = replyWriter.length;
+                $('#comment').val(replyWriter);
+
+                replyGroup = groupParam;
+            }
+
+            function replyswitch(listId, data) {
+                if($(data)[0].className.substr(0, 6) == 'replyo') {
+                    $(data).hide();
+                    $('.replyhide' + $(data)[0].className.split('n')[1]).show();
+                    $('.replyList' + $(data)[0].className.split('n')[1]).show();
+                } else {
+                    $(data).hide();
+                    $('.replyon' + $(data)[0].className.split('e')[2]).show();
+                    $('.replyList' + $(data)[0].className.split('e')[2]).hide();
+                }
+            }
+
+            $('#menuModal').on('show.bs.modal', function(e) {
+                $(".modal").css("z-index","1040");
+                $("#menuModal").css("z-index","1060");
+                modalNowDate = $(e.relatedTarget).data('date')
+                modalNowNickName = $(e.relatedTarget).data('nickname')
+            });
+
+            $('.menu_delete').on('click', function(event) {
+                var con = confirm('삭제하시겠습니까?')
+
+                var jsonArray = {
+                    nickName : modalNowNickName
+                }
+
+                var infoData = ajax('/user/info', JSON.stringify(jsonArray), 'POST', 'JSON');
+
+                var date = new Date(modalNowDate)
+                date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+
+                if(con) {
+                    var jsonArray = {}
+                    if(getCookie("userData") == 'admin') {
+                        jsonArray = {
+                            id : infoData[0].ID,
+                            date : date
+                        }
+                    } else {
+                        jsonArray = {
+                            id : getCookie("userData"),
+                            date : date
+                        }
+                    }
+
+                    var data = ajax('/board/delete', JSON.stringify(jsonArray), 'POST', 'TEXT')
+                    if(data == "success") {
+                        alert("삭제가 완료되었습니다.");
+                        location.reload(true);
+                    }
+                } else {
+                    return false;
+                }
+            });
+
+            $('.menu_modify').on('click', function(event) {
+                var jsonArray = {
+                    nickName : modalNowNickName
+                }
+
+                var infoData = ajax('/user/info', JSON.stringify(jsonArray), 'POST', 'JSON');
+
+                var date = new Date(modalNowDate)
+                date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+                
+                if(getCookie("userData") == 'admin') {
+                    jsonArray = {
+                        id : infoData[0].ID,
+                        date : date
+                    }
+                } else {
+                    jsonArray = {
+                        id : getCookie("userData"),
+                        date : date
+                    }
+                }
+
+                var data = ajax('/board/detail', JSON.stringify(jsonArray), 'POST', 'JSON');
+
+                $('#myModal').modal('hide');
+                $('#menuModal').modal('hide');
+                $('#createModal').modal('hide');
+                $(".modal").css("z-index","1041");
+                $('.profile-modify-wrap').hide();
+                $('#modifyModal').modal('show');
+                var fileName = data[0].Image.split('/')[data[0].Image.split('/').length - 1];
+                $("#profile-modify-image").attr("src", "../../upload/" + fileName);
+                $('#inputModifyContent').val(data[0].Content);
+                fileBlob($("#profile-modify-image").attr("src"), fileName);
+            });
+
+            $('.modal_modify').on('click', function(event) {
+                var con = confirm('게시판을 수정하시겠습니까?');
+                if(con) {
+                    if($('#inputModifyContent').val() == "") {
+                        alert("내용을 입력 해주세요.");
+                        return false;
+                    }
+                    if($('#modifyInputProfile')[0].files[0] == undefined && nowFile == undefined) {
+                        alert("사진을 업로드 해주세요.")
+                        return false;
+                    }
+    
+                    var id = getCookie("userData");
+                    var upload = $('#modifyInputProfile')[0].files[0]||nowFile;
+                    var content = $('#inputModifyContent').val();
+                    var date = new Date(modalNowDate)
+                    date = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+    
+                    var formData = new FormData();
+    
+                    formData.append("id", id);
+                    formData.append("Upload", upload);
+                    formData.append("content", content);
+                    formData.append("date", date);
+
+	                $.ajax({
+                        url:'/board/modify', // 요청 할 주소        
+                        type:'POST', // GET, PUT
+                        data: formData, // 전송할 데이터
+                        processData: false,    // 반드시 작성
+                        contentType: false,    // 반드시 작성
+                        dataType:'TEXT',// xml, json, script, html
+                        //beforeSend:function(jqXHR) {},// 서버 요청 전 호출 되는 함수 return false; 일 경우 요청 중단
+                        success:function(data) {
+                            if(data == "success") {
+                              alert("게시판 수정이 완료되었습니다.")
+                              location.reload(true);
+                            } else {
+                                    alert("오류! 관리자에게 문의하세요.")
+                                    return false;
+                            }
+                        },// 요청 완료 시
+                        error:function(data) {
+                            alert("오류! 관리자에게 문의하세요.")
+                            return false;
+                        },// 요청 실패.
+                        //complete:function(jqXHR) {}// 요청의 실패, 성공과 상관 없이 완료 될 경우 호출
+                    });
+                }
+            });
+
+            $('.menu_close').on('click', function(event) {
+                $('#menuModal').modal('hide');
+                $(".modal").css("z-index","1041");
+            });
+
+            function ajax(urlValue, dataValue, typeValue, dataTypeValue, content) {
+                var result = "";
+
+                $.ajax({
+                    url: urlValue, // 요청 할 주소
+                    type: typeValue, // GET, PUT
+                    async: false,
+                    data: dataValue, // 전송할 데이터
+                    contentType: "application/json",
+                    dataType: dataTypeValue,// xml, json, script, html
+                    //beforeSend:function(jqXHR) {},// 서버 요청 전 호출 되는 함수 return false; 일 경우 요청 중단
+                    success:function(data) {
+                        result = data;
+                    },// 요청 완료 시
+                    error:function(data) {
+                        alert("오류! 관리자에게 문의하세요.")
+                        return false;
+                    },// 요청 실패.
+                    complete:function(jqXHR) {
+                        
+                    }// 요청의 실패, 성공과 상관 없이 완료 될 경우 호출
+                });
+
+                return result;
+            }
+
+            function fileBlob(filePath, fileName) {
+                var GetFileBlobUsingURL = function (url, convertBlob) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("GET", url);
+                    xhr.responseType = "blob";
+                    xhr.addEventListener('load', function() {
+                        convertBlob(xhr.response);
+                    });
+                    xhr.send();
+                };
+
+                var blobToFile = function (blob, name) {
+                        blob.lastModifiedDate = new Date();
+                        blob.name = name;
+                        return blob;
+                };
+
+                var GetFileObjectFromURL = function(filePathOrUrl, convertBlob) {
+                    GetFileBlobUsingURL(filePathOrUrl, function (blob) {
+                        convertBlob(blobToFile(blob, fileName));
+                    });
+                };
+
+                GetFileObjectFromURL(filePath, function (fileObject) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        nowFilePath = e.target.result;
+                    };
+
+                    reader.readAsDataURL(fileObject);
+                    nowFile = fileObject
+                });
+            }
+
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+        </script>
+        <style>
+            .cards {
+                flex : 0 0 32.8%;
+                flex-direction: flex;
+            }
+
+            .grid {
+                max-width: 100%;
+                margin: 0 auto;
+                display: grid;
+                grid-gap: 10px;
+                grid-template-columns: 100%;
+                grid-auto-rows: 0;
+            }
+
+            img {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            
+            .box {
+                width: 30px;
+                height: 30px; 
+                border-radius: 70%;
+                overflow: hidden;
+            }
+
+            .profileImg {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                vertical-align:middle;
+            }
+
+            .nickName {
+                margin-top: 5px;
+                margin-left: 10px;
+            }
+
+            .heart {
+                margin-right: 10px;
+            }
+
+            .love {
+                margin-right: 10px;
+                color: red;
+            }
+
+            time {
+                font-size: 10px;
+                color: #8e8e8e;
+            }
+
+            .drag-text {
+                margin-top: 30px;
+            }
+
+            .file-upload {
+                height: 300px;
+            }
+
+            .menuDiv {
+                margin-left: auto;
+                margin-top: 4px;
+            }
+
+            .modal {
+                top: 10%;
+                height: 80vh;
+                overflow-y: auto;
+            }
+
+            .modal::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, Opera*/
+            }
+
+            #commentModal {
+                top: 50%;
+                margin-top: -50px;
+            }
+
+            #menuModal {
+                top: 50%;
+                margin-top: -50px;
+            }
+
+            .menu-body div, .comment-body div {
+                text-align: center;
+                cursor: pointer;
+                padding: 10px;
+            }
+
+            .menu-body div span, .comment-body div span {
+                font-size: 14px;
+            }
+
+            .menu_modify, .comment_modal {
+                border-top: 1px solid rgba(var(--b6a,219,219,219),1); 
+                border-bottom: 1px solid rgba(var(--b6a,219,219,219),1);
+            }
+
+            textarea {
+                border: none;
+                resize: none;
+                outline:0px !important;
+                -webkit-box-shadow: none !important;
+            }
+
+            .commentB {
+                font-size: 14px;
+                width: 15%;
+                border: 0;
+                background-color: white;
+                color: rgba(var(--d69,0,149,246),1);
+            }
+
+            ul {
+                list-style:none;
+                padding-left:0px;
+            }
+
+            .commentScroll {
+                overflow-y: scroll;
+            }
+
+            .commentScroll::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, Opera*/
+            }
+
+            .fa-ellipsis-h {
+                cursor: pointer;
+            }
+
+            .reply {
+                margin-right: 10px;
+                cursor: pointer;
+            }
+        </style>
+    </body>
+</html>
