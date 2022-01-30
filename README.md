@@ -21,5 +21,7 @@ Calorie Guide
 
 ![tools](https://user-images.githubusercontent.com/73628812/151692739-a257082d-0d23-45d5-82f0-22e6f3cae542.PNG)
 
+## 시스템 흐름
 
+![시스템 흐름](https://user-images.githubusercontent.com/73628812/151692941-afe5b337-488e-4659-b907-f363bf22fd08.PNG)
 
