@@ -9,8 +9,8 @@ Calorie Guide
 
 ## 기존의 존재하는 식단 관리 어플들과의 차별화
 
-
--> 기존 어플의 문제점들을 해결
+![한계점](https://user-images.githubusercontent.com/73628812/151692783-df5dedc4-0072-471b-8ab4-cfee6b838ec3.PNG)
+<br>-> 이러한 기존 어플의 문제점들을 해결
 
 ## 프로젝트 목적
 
