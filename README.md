@@ -21,7 +21,7 @@ Calorie Guide
 
 ![tools](https://user-images.githubusercontent.com/73628812/151692739-a257082d-0d23-45d5-82f0-22e6f3cae542.PNG)
 
-## Languages
+## Skills
 
 + Javascript
 + HTML/CSS
